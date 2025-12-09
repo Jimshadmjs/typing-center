@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-qatar-red: #8A1538;
+  --color-white: #FFFFFF;
+}
+
+/* Custom Variables (Optional) */
+:root {
+  --qatar-red: #8A1538;
+  --white: #FFFFFF;
+}
