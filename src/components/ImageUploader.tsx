@@ -29,26 +29,35 @@
 import { useState } from "react";
 import { uploadToCloudinary } from "../services/cloudinary";
 
-const ImageUploader = () => {
-  const [imageURL, setImageURL] = useState<string>("");
+interface ImageUploaderProps {
+  onUpload: (url: string) => Promise<void>;
+}
+
+export default function ImageUploader({ onUpload }: ImageUploaderProps) {
+  const [previewURL, setPreviewURL] = useState<string>("");
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // 1. Upload to Cloudinary (your function)
     const url = await uploadToCloudinary(file);
-    setImageURL(url);
+
+    // 2. Preview locally
+    setPreviewURL(url);
+
+    // 3. Notify parent component
+    await onUpload(url);
   };
 
   return (
     <div>
       <input type="file" accept="image/*" onChange={handleUpload} />
 
-      {imageURL && (
-        <img src={imageURL} alt="uploaded" style={{ width: "200px" }} />
+      {previewURL && (
+        <img src={previewURL} alt="uploaded" style={{ width: "200px" }} />
       )}
     </div>
   );
-};
+}
 
-export default ImageUploader;
