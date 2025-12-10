@@ -6,8 +6,8 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut as fbSignOut,
-  User,
 } from "firebase/auth";
+import type { User } from "firebase/auth";
 
 type AuthContextType = {
   user: User | null;
