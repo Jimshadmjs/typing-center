@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import GalleryPage from "./pages/GalleryPage";
 import type { JSX } from "react";
 import RegisterPage from "./pages/RegisterPage";
+import HomePage from "./pages/HomePage";
 
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
@@ -18,6 +19,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
