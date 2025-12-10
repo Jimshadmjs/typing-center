@@ -11,19 +11,26 @@ export const Gallery: React.FC = () => {
   const [images, setImages] = useState<ImageDoc[]>([]);
 
   useEffect(() => {
-    const q = query(collection(db, "images"), orderBy("createdAt", "desc"));
+  const q = query(imagesCollection, orderBy("createdAt", "desc"));
 
-    const unsub = onSnapshot(q, (snap) => {
-      const data = snap.docs.map((d) => ({
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const data: ImageDoc[] = snapshot.docs.map((d) => {
+      const raw = d.data();
+
+      return {
         id: d.id,
-        ...(d.data() as Omit<ImageDoc, "id" | "createdAt">),
-        createdAt: d.data().createdAt?.toDate(),
-      }));
-      setImages(data);
+        url: raw.url,
+        ownerId: raw.ownerId,
+        createdAt: raw.createdAt?.toDate?.() ?? new Date(0),
+      };
     });
 
-    return () => unsub();
-  }, []);
+    setImages(data);
+  });
+
+  return () => unsubscribe();
+}, []);
+
 
 const handleUpload = async (url: string) => {
   if (!auth.currentUser) {
