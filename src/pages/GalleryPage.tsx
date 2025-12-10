@@ -1,6 +1,6 @@
 // import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import {Gallery} from "../features/gallery/Gallery";
+import {Gallery , handleUpload} from "../features/gallery/Gallery";
 import ImageUploader from "../components/ImageUploader";
 import { auth } from "../services/firebase";
 import { signOut } from "firebase/auth";
@@ -48,7 +48,7 @@ export default function GalleryPage() {
         </button>
       </header>
 
-      <ImageUploader onUpload={async () => {}} />
+      <ImageUploader onUpload={handleUpload} />
 
       <Gallery />
     </div>
