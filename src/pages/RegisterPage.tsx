@@ -1,25 +1,24 @@
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { auth } from "../services/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
-  const { signIn } = useAuth();
-  const navigate = useNavigate();
-
+export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      await signIn(email, password);
-      navigate("/gallery");
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/login");
     } catch (err: any) {
-      setError(err.message || "Login failed");
+      setError(err.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -48,7 +47,7 @@ export default function LoginPage() {
           minWidth: "300px",
         }}
       >
-        <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>Login</h2>
+        <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>Register</h2>
 
         {error && (
           <p style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>
@@ -97,12 +96,8 @@ export default function LoginPage() {
             cursor: loading ? "not-allowed" : "pointer",
           }}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Registering..." : "Register"}
         </button>
-        <p style={{ marginTop: "1rem", textAlign: "center" }}>
-         Don't have an account? <a href="/register" style={{ color: "#8A1538" }}>Register</a>
-        </p>
-
       </form>
     </div>
   );

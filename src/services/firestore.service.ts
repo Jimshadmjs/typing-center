@@ -3,10 +3,10 @@ import { addDoc, collection, doc, getDoc, serverTimestamp } from "firebase/fires
 
 export const collectionRef = (name : string) => collection(db,name)
 
-export async function addDocWithTimestamp(collectionName:string , data : any) {
+export async function addDocWithTimestamp<T>(collectionName: string, data: T) {
     const docRef = await addDoc(collectionRef(collectionName), {
         ...data,
-        createAt : serverTimestamp()
+        createdAt : serverTimestamp()
     })
     return docRef
     

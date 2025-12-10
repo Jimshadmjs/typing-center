@@ -7,6 +7,16 @@ import {auth} from "../../services/firebase"
 
 const imagesCollection = collection(db, "images");
 
+
+export const handleUpload = async (url: string) => {
+  if (!auth.currentUser) throw new Error("User must be logged in.");
+  await addDoc(imagesCollection, {
+    url,
+    ownerId: auth.currentUser.uid,
+    createdAt: serverTimestamp(),
+  });
+};
+
 export const Gallery: React.FC = () => {
   const [images, setImages] = useState<ImageDoc[]>([]);
 
@@ -31,18 +41,6 @@ export const Gallery: React.FC = () => {
   return () => unsubscribe();
 }, []);
 
-
-const handleUpload = async (url: string) => {
-  if (!auth.currentUser) {
-    throw new Error("User must be logged in to upload images.");
-  }
-
-  await addDoc(imagesCollection, {
-    url,
-    ownerId: auth.currentUser.uid,
-    createdAt: serverTimestamp(),
-  });
-};
 
   return (
     <div>
