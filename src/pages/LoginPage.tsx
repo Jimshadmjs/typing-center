@@ -1,25 +1,27 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider } from "../services/firebase";
-import { signInWithPopup } from "firebase/auth";
 
 export default function LoginPage() {
-  const { user, loading } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!loading && user) {
-      navigate("/gallery");
-    }
-  }, [user, loading, navigate]);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (err) {
-      console.error("Login failed:", err);
-      alert("Login failed. Check console.");
+      await signIn(email, password);
+      navigate("/gallery");
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -29,29 +31,75 @@ export default function LoginPage() {
         height: "100vh",
         backgroundColor: "#8A1538",
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
-        flexDirection: "column",
+        alignItems: "center",
         color: "#FFFFFF",
       }}
     >
-      <h1 style={{ marginBottom: "20px", fontSize: "2rem" }}>Welcome</h1>
-
-      <button
-        onClick={handleLogin}
+      <form
+        onSubmit={handleSubmit}
         style={{
+          display: "flex",
+          flexDirection: "column",
           backgroundColor: "#FFFFFF",
+          padding: "2rem",
+          borderRadius: "12px",
           color: "#8A1538",
-          padding: "12px 24px",
-          borderRadius: "8px",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "1rem",
-          fontWeight: "bold",
+          minWidth: "300px",
         }}
       >
-        Sign in with Google
-      </button>
+        <h2 style={{ marginBottom: "1rem", textAlign: "center" }}>Login</h2>
+
+        {error && (
+          <p style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>
+            {error}
+          </p>
+        )}
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{
+            padding: "8px",
+            marginBottom: "1rem",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{
+            padding: "8px",
+            marginBottom: "1rem",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+          }}
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            backgroundColor: "#8A1538",
+            color: "#FFFFFF",
+            padding: "10px",
+            border: "none",
+            borderRadius: "6px",
+            fontWeight: "bold",
+            cursor: loading ? "not-allowed" : "pointer",
+          }}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
     </div>
   );
 }
